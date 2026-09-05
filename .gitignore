@@ -1,0 +1,22 @@
+# Binários compilados
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Ambientes locais e segredos
+.env
+.env.local
+*.log
+
+# IDE e Editores
+.vscode/
+.idea/
+*.swp
+*~
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db

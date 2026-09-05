@@ -1,0 +1,30 @@
+# Coloque este arquivo dentro da pasta do repositório 'manga-wrapper'
+# com o nome: docker-compose.override.yml
+# O Docker Compose mescla este arquivo automaticamente com o docker-compose.yml original!
+
+services:
+  db:
+    # Mapeia Postgres para 5434 no host para evitar conflito com FinHub (5433)
+    ports: !override
+      - "5434:5432"
+
+  backend:
+    # Mapeia a API para 8082 no host para evitar conflito com FinHub (8081) e Portfólio (8080)
+    ports: !override
+      - "8082:8080"
+    networks:
+      - manga_network
+      - homelab_network
+
+  frontend:
+    # Frontend permanece em 5173 ou mapeado para 3002
+    ports: !override
+      - "3002:5173"
+    networks:
+      - manga_network
+      - homelab_network
+
+networks:
+  homelab_network:
+    name: homelab_network
+    external: true

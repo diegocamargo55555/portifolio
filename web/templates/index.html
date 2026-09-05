@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="{{ .CurrentLang }}" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Profile.Name }} | {{ .Profile.Title }}</title>
+    <meta name="description" content="{{ .Profile.BioShort }}">
+    <meta name="author" content="{{ .Profile.Name }}">
+
+    <!-- Open Graph / Meta -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ .Profile.Name }} - {{ .Profile.Title }}">
+    <meta property="og:description" content="{{ .Profile.BioShort }}">
+    <meta property="og:url" content="https://{{ .HostInfo.Tunnel }}">
+
+    <!-- Favicon (Gopher SVG) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306b6d4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='16 18 22 12 16 6'></polyline><polyline points='8 6 2 12 8 18'></polyline></svg>">
+
+    <!-- Tailwind CSS CDN para renderização atômica instantânea -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            cyan: '#06b6d4',
+                            emerald: '#10b981',
+                            dark: '#0a0f1d',
+                            card: '#111827',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-[#0a0f1d] text-slate-200 antialiased selection:bg-cyan-500/20 selection:text-cyan-300 relative">
+
+    <!-- Efeitos de Luz de Fundo -->
+    <div class="bg-glow-cyan top-0 left-1/4 -translate-x-1/2"></div>
+    <div class="bg-glow-emerald top-96 right-10"></div>
+
+    <!-- NAVBAR -->
+    <header class="fixed top-0 left-0 right-0 z-40 glass-panel border-b border-white/5 px-4 lg:px-8 py-3.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo / Brand -->
+            <a href="#" class="flex items-center space-x-2 text-white font-mono font-semibold tracking-tight hover:text-cyan-400 transition-colors">
+                <span class="text-cyan-400 font-bold">&gt;_</span>
+                <span>diego.camargo</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-400 border border-cyan-800/40 hidden sm:inline-block">Go 1.22+</span>
+            </a>
+
+            <!-- Navegação Desktop -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+                <a href="#projetos" class="hover:text-cyan-400 transition-colors">{{ .T.NavProjects }}</a>
+                <a href="#habilidades" class="hover:text-cyan-400 transition-colors">{{ .T.NavSkills }}</a>
+                <a href="#homelab" class="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-green"></span>
+                    {{ .T.NavHomelab }}
+                </a>
+                <a href="#sobre" class="hover:text-cyan-400 transition-colors">{{ .T.NavAbout }}</a>
+                <a href="#contato" class="hover:text-cyan-400 transition-colors">{{ .T.NavContact }}</a>
+            </nav>
+
+            <!-- Ações: Alternador de Idioma & GitHub -->
+            <div class="flex items-center space-x-3">
+                <!-- Seletor de Idioma Bilíngue -->
+                <div class="flex items-center bg-slate-900/90 border border-slate-800 rounded-lg p-0.5 text-xs font-semibold">
+                    <a href="/set-lang/pt" class="px-2.5 py-1 rounded {{ if eq .CurrentLang "pt" }}bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30{{ else }}text-slate-400 hover:text-white{{ end }} transition-all">
+                        PT
+                    </a>
+                    <a href="/set-lang/en" class="px-2.5 py-1 rounded {{ if eq .CurrentLang "en" }}bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30{{ else }}text-slate-400 hover:text-white{{ end }} transition-all">
+                        EN
+                    </a>
+                </div>
+
+                <!-- Link GitHub -->
+                <a href="{{ .Profile.GitHubURL }}" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-cyan-500/50 hover:text-cyan-400 transition-all text-slate-300" title="GitHub">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-36 pb-20 md:pt-44 md:pb-28 px-4 lg:px-8 max-w-7xl mx-auto z-10">
+        <div class="max-w-3xl">
+            <!-- Badge de Status -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 mb-6">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-green"></span>
+                <span>{{ .T.HeroBadge }}</span>
+            </div>
+
+            <!-- Título Principal -->
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+                {{ .T.HeroTitlePrefix }} <span class="bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">{{ .T.HeroTitleHighlight }}</span>
+            </h1>
+
+            <p class="text-xl sm:text-2xl text-slate-300 font-medium mb-4">
+                {{ .Profile.Title }}
+            </p>
+
+            <p class="text-base sm:text-lg text-slate-400 leading-relaxed mb-8 max-w-2xl">
+                {{ .T.HeroSubtitle }}
+            </p>
+
+            <!-- Botões de Ação -->
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="#projetos" class="px-6 py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 transition-all flex items-center gap-2">
+                    <span>{{ .T.BtnProjects }}</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </a>
+
+                <a href="#homelab" class="px-6 py-3.5 rounded-xl font-semibold text-sm bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 hover:border-cyan-500/50 transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
+                    <span>{{ .T.NavHomelab }}</span>
+                </a>
+
+                <button onclick="copyEmail('{{ .Profile.Email }}', '{{ .T.EmailCopied }}')" id="btn-copy-email" class="px-5 py-3.5 rounded-xl font-medium text-sm bg-slate-900/50 hover:bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    <span>{{ .T.CopyEmail }}</span>
+                </button>
+            </div>
+
+            <!-- Destaques Rápidos -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12 pt-8 border-t border-slate-800/80">
+                <div class="p-3.5 rounded-lg bg-slate-900/40 border border-slate-800/60">
+                    <div class="text-xs text-slate-400 font-mono">BACKEND</div>
+                    <div class="text-sm font-bold text-white mt-1">Golang &amp; Gin</div>
+                </div>
+                <div class="p-3.5 rounded-lg bg-slate-900/40 border border-slate-800/60">
+                    <div class="text-xs text-slate-400 font-mono">ARQUITETURA</div>
+                    <div class="text-sm font-bold text-cyan-400 mt-1">Clean Arch</div>
+                </div>
+                <div class="p-3.5 rounded-lg bg-slate-900/40 border border-slate-800/60">
+                    <div class="text-xs text-slate-400 font-mono">DADOS</div>
+                    <div class="text-sm font-bold text-emerald-400 mt-1">Postgres &amp; Redis</div>
+                </div>
+                <div class="p-3.5 rounded-lg bg-slate-900/40 border border-slate-800/60">
+                    <div class="text-xs text-slate-400 font-mono">INFRA</div>
+                    <div class="text-sm font-bold text-teal-400 mt-1">Docker &amp; Ubuntu</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJETOS EM DESTAQUE -->
+    <section id="projetos" class="relative py-20 px-4 lg:px-8 max-w-7xl mx-auto z-10">
+        <div class="mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
+                {{ .T.SectionProjectsTitle }}
+            </h2>
+            <p class="text-slate-400 text-lg max-w-2xl">
+                {{ .T.SectionProjectsSub }}
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {{ range .Projects }}
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden border border-white/5">
+                <!-- Barra superior do Card -->
+                <div>
+                    <div class="flex items-center justify-between gap-4 mb-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold {{ if eq .BadgeColor "emerald" }}bg-emerald-950/80 text-emerald-400 border border-emerald-800/50{{ else }}bg-cyan-950/80 text-cyan-400 border border-cyan-800/50{{ end }}">
+                            {{ .Category }}
+                        </span>
+                        <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span>{{ .ContainerName }}</span>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-white mb-2 hover:text-cyan-400 transition-colors">
+                        {{ .Title }}
+                    </h3>
+
+                    <p class="text-cyan-300/90 text-sm font-medium mb-4">
+                        {{ .Tagline }}
+                    </p>
+
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        {{ .Description }}
+                    </p>
+
+                    <!-- Features Chave -->
+                    <div class="space-y-2 mb-6">
+                        {{ range .KeyFeatures }}
+                        <div class="flex items-start gap-2 text-xs text-slate-400">
+                            <svg class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span>{{ . }}</span>
+                        </div>
+                        {{ end }}
+                    </div>
+
+                    <!-- Tech Badges -->
+                    <div class="flex flex-wrap gap-1.5 mb-8">
+                        {{ range .TechStack }}
+                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-slate-900 text-slate-300 border border-slate-800">
+                            {{ . }}
+                        </span>
+                        {{ end }}
+                    </div>
+                </div>
+
+                <!-- Botões de Ação do Projeto -->
+                <div class="pt-6 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+                    <button onclick="openProjectModal('{{ .ID }}')" class="px-4 py-2.5 rounded-lg text-xs font-semibold bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-800/50 transition-all flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span>{{ $.T.BtnArchDeepDive }}</span>
+                    </button>
+
+                    <div class="flex items-center gap-2">
+                        <a href="{{ .GitHubURL }}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 transition-all flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                            <span>{{ $.T.BtnSourceCode }}</span>
+                        </a>
+
+                        <a href="{{ .LiveURL }}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 rounded-lg text-xs font-semibold bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-800/50 transition-all flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            <span>{{ $.T.BtnLiveDemo }}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {{ end }}
+        </div>
+    </section>
+
+    <!-- MODAIS DE ARQUITETURA PROFUNDA (FINHUB & MANGA WRAPPER) -->
+    {{ range .Projects }}
+    <div id="modal-{{ .ID }}" class="project-modal fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-panel max-w-2xl w-full rounded-2xl border border-slate-700/80 p-6 sm:p-8 max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+                <div>
+                    <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">{{ $.T.ArchitectureModalTitle }}</span>
+                    <h3 class="text-2xl font-bold text-white mt-0.5">{{ .Title }}</h3>
+                </div>
+                <button onclick="closeProjectModal('{{ .ID }}')" class="p-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 hover:border-slate-700 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="space-y-6 text-sm text-slate-300">
+                <div>
+                    <h4 class="text-base font-semibold text-white mb-2">Visão Arquitetural</h4>
+                    <p class="leading-relaxed text-slate-300">{{ .LongDescription }}</p>
+                </div>
+
+                <div class="terminal-box rounded-xl p-4">
+                    <div class="text-xs font-mono text-cyan-400 mb-2">// Especificação da Stack Técnica</div>
+                    <div class="space-y-1.5 font-mono text-xs text-slate-300">
+                        <div><span class="text-emerald-400">Arquitetura:</span> {{ .ArchitectureSummary }}</div>
+                        <div><span class="text-cyan-400">Rede Docker:</span> homelab_network (isolada)</div>
+                        <div><span class="text-teal-400">Container:</span> {{ .ContainerName }}</div>
+                        <div><span class="text-slate-400">Porta Interna:</span> {{ .InternalPort }}</div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-base font-semibold text-white mb-3">Decisões de Engenharia</h4>
+                    <ul class="space-y-2">
+                        {{ range .ArchitectureDetails }}
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-cyan-400 font-bold mt-0.5">&bull;</span>
+                            <span>{{ . }}</span>
+                        </li>
+                        {{ end }}
+                    </ul>
+                </div>
+
+                <div class="pt-4 border-t border-slate-800 flex justify-end">
+                    <button onclick="closeProjectModal('{{ .ID }}')" class="px-5 py-2.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white transition-colors">
+                        {{ $.T.CloseModal }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+
+    <!-- SEÇÃO HOMELAB NO UBUNTU SERVER -->
+    <section id="homelab" class="relative py-20 px-4 lg:px-8 max-w-7xl mx-auto z-10">
+        <div class="glass-panel rounded-3xl p-8 sm:p-12 border border-white/5 relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-950/80 text-cyan-300 border border-cyan-800/40 mb-3">
+                        <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                        <span>{{ .T.SelfHostedBadge }}</span>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
+                        {{ .T.SectionHomelabTitle }}
+                    </h2>
+                    <p class="text-slate-400 text-base max-w-2xl">
+                        {{ .T.SectionHomelabSub }}
+                    </p>
+                </div>
+
+                <!-- Host Specs Badge -->
+                <div class="terminal-box rounded-xl p-4 text-xs font-mono space-y-1.5 shrink-0 border border-slate-800">
+                    <div><span class="text-cyan-400">Host OS:</span> {{ .HostInfo.OS }}</div>
+                    <div><span class="text-emerald-400">Runtime:</span> {{ .HostInfo.Runtime }}</div>
+                    <div><span class="text-teal-400">Orchestration:</span> {{ .HostInfo.Engine }}</div>
+                    <div><span class="text-slate-400">Ingress:</span> {{ .HostInfo.Tunnel }}</div>
+                </div>
+            </div>
+
+            <!-- Grade de Containers Ativos -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {{ range $index, $svc := .HomelabServices }}
+                <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-800/80 hover:border-cyan-500/40 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-bold text-sm text-white">{{ $svc.Name }}</span>
+                            <span id="status-badge-{{ $index }}" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-950/60 text-emerald-400 border border-emerald-800/50">
+                                <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-400 pulse-green"></span>
+                                Online
+                            </span>
+                        </div>
+                        <div class="text-xs text-slate-400 mb-2">{{ $svc.Role }}</div>
+                        <div class="text-xs font-mono text-cyan-300/80 bg-slate-950/60 px-2 py-1 rounded border border-slate-800/80 mb-2">
+                            {{ $svc.Stack }}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-slate-800/60 font-mono">
+                        <span>{{ $svc.Port }}</span>
+                        <span class="text-slate-400">{{ $svc.RAMUsage }}</span>
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+
+            <!-- Explicação Técnica da Resolução de Portas -->
+            <div class="terminal-box rounded-xl p-5 text-xs text-slate-300 space-y-2">
+                <div class="font-mono text-cyan-400 font-semibold">// Como resolvemos o conflito de portas do FinHub e Manga Wrapper:</div>
+                <p>
+                    Tanto o <strong class="text-white">FinHub</strong> quanto o <strong class="text-white">Manga Wrapper</strong> tentavam originariamente abrir a porta <code class="text-cyan-300">5432</code> (PostgreSQL) e <code class="text-cyan-300">8080</code> (API Go).
+                    Na nossa arquitetura, os bancos conversam estritamente dentro da rede virtual isolada <code class="text-emerald-300">homelab_network</code> sem expor portas na máquina host. O tráfego externo é canalizado pelo <strong class="text-white">Cloudflare Tunnel</strong> de forma criptografada para cada container por subdomínio, sem necessidade de abrir portas no roteador de casa nem expor o IP público.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HABILIDADES TÉCNICAS (SKILLS) -->
+    <section id="habilidades" class="relative py-20 px-4 lg:px-8 max-w-7xl mx-auto z-10">
+        <div class="mb-12">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
+                {{ .T.SectionSkillsTitle }}
+            </h2>
+            <p class="text-slate-400 text-lg max-w-2xl">
+                {{ .T.SectionSkillsSub }}
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {{ range .Skills }}
+            <div class="glass-panel rounded-2xl p-6 border border-white/5 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-1.5">{{ .Title }}</h3>
+                    <p class="text-xs text-slate-400 mb-5 leading-relaxed">{{ .Description }}</p>
+
+                    <div class="space-y-2.5">
+                        {{ range .Skills }}
+                        <div class="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80">
+                            <span class="font-medium text-slate-200">{{ .Name }}</span>
+                            <span class="text-cyan-400 font-mono text-[11px]">{{ .Level }}</span>
+                        </div>
+                        {{ end }}
+                    </div>
+                </div>
+            </div>
+            {{ end }}
+        </div>
+    </section>
+
+    <!-- SOBRE MIM -->
+    <section id="sobre" class="relative py-20 px-4 lg:px-8 max-w-7xl mx-auto z-10">
+        <div class="glass-panel rounded-3xl p-8 sm:p-12 border border-white/5">
+            <div class="max-w-3xl">
+                <h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
+                    {{ .T.SectionAboutTitle }}
+                </h2>
+                <p class="text-cyan-400 text-lg font-medium mb-6">
+                    {{ .Profile.Subtitle }}
+                </p>
+                <div class="space-y-4 text-slate-300 text-base leading-relaxed mb-8">
+                    <p>{{ .Profile.BioLong }}</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-slate-800">
+                    {{ range .Profile.KeyHighlights }}
+                    <div class="flex items-center gap-3 text-sm text-slate-200">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                        <span>{{ . }}</span>
+                    </div>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section id="contato" class="relative py-20 px-4 lg:px-8 max-w-7xl mx-auto z-10 text-center">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
+                {{ .T.SectionContactTitle }}
+            </h2>
+            <p class="text-slate-400 text-lg mb-8">
+                {{ .T.SectionContactSub }}
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center gap-4">
+                <a href="mailto:{{ .Profile.Email }}" class="px-6 py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 shadow-lg shadow-cyan-500/20 transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span>{{ .Profile.Email }}</span>
+                </a>
+
+                <a href="{{ .Profile.GitHubURL }}" target="_blank" rel="noopener noreferrer" class="px-6 py-3.5 rounded-xl font-semibold text-sm bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 transition-all flex items-center gap-2">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    <span>GitHub</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-8 px-4 border-t border-slate-800/80 text-center text-xs text-slate-500 font-mono">
+        <p>&copy; {{ .Profile.Name }}. Desenvolvido em Golang com embed.FS &bull; Self-hosted no Ubuntu Server via Docker.</p>
+    </footer>
+
+    <!-- App JS -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

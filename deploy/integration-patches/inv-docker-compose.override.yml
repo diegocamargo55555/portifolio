@@ -1,0 +1,36 @@
+# Coloque este arquivo dentro da pasta do repositório 'inv' (FinHub)
+# com o nome: docker-compose.override.yml
+# O Docker Compose mescla este arquivo automaticamente com o docker-compose.yml original!
+
+services:
+  postgres:
+    # Remove a exposição da porta 5432 no host (evita colisão com manga-wrapper)
+    # ou mapeia para 5433 caso você queira acessar via DBeaver
+    ports: !override
+      - "5433:5432"
+
+  redis:
+    # Mapeia Redis para 6380 no host para evitar choque de portas
+    ports: !override
+      - "6380:6379"
+
+  backend:
+    # Mapeia a API para 8081 no host (evita colisão com manga-wrapper e portfólio)
+    ports: !override
+      - "8081:8080"
+    networks:
+      - inv_network
+      - homelab_network
+
+  frontend:
+    # Mapeia o Frontend para 3001 no host
+    ports: !override
+      - "3001:80"
+    networks:
+      - inv_network
+      - homelab_network
+
+networks:
+  homelab_network:
+    name: homelab_network
+    external: true
