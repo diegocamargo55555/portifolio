@@ -18,3 +18,4 @@ services:
 networks:
   homelab_network:
     name: homelab_network
+    external: true
